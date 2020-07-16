@@ -1,25 +1,26 @@
 {
-    "name": "alonexy/pipe_log_store",
-    "type": "library",
-    "require": {
-        "php": ">=7.2",
-        "monolog/monolog": "2.1"
-    },
-    "authors": [
-        {
-            "name": "alonexy",
-            "email": "hpl1124@126.com"
-        }
-    ],
-    "autoload": {
-        "psr-4": {
-            "Alonexy\\Pls\\": "src/",
-            "Alonexy\\Test\\": "tests/"
-        }
-    },
-    "autoload-dev": {
-        "psr-4": {
-            "Converter\\Converter\\": "tests/"
-        }
+  "name": "alonexy/pipe_log_store",
+  "type": "library",
+  "license": "MIT",
+  "require": {
+    "php": ">=7.2",
+    "monolog/monolog": "2.1"
+  },
+  "authors": [
+    {
+      "name": "alonexy",
+      "email": "hpl1124@126.com"
     }
+  ],
+  "autoload": {
+    "psr-4": {
+      "Alonexy\\Pls\\": "src/",
+      "Alonexy\\Test\\": "tests/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Converter\\Converter\\": "tests/"
+    }
+  }
 }
