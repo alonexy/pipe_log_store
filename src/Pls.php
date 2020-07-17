@@ -1,8 +1,14 @@
 <?php
 namespace Alonexy\Pls;
 
+use Monolog\Formatter\JsonFormatter;
 use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
+use Monolog\Processor\HostnameProcessor;
+use Monolog\Processor\MemoryUsageProcessor;
+use Monolog\Processor\ProcessIdProcessor;
+use Monolog\Processor\UidProcessor;
+use Monolog\Processor\WebProcessor;
 
 class PlogStore
 {
@@ -17,11 +23,7 @@ class PlogStore
         Logger::EMERGENCY => 'emergency',
     ];
     protected $timeOut = 10;
-
-    public function __construct()
-    {
-
-    }
+    protected $isEnabledInfo = true;
 
     /**
      * @param int $seconds
@@ -30,6 +32,16 @@ class PlogStore
     public function setTimeout(int $seconds)
     {
         $this->timeOut = $seconds;
+        return $this;
+    }
+
+    /**
+     * @param bool $f
+     * @return $this
+     */
+    public function isEnabledInfo(bool $f)
+    {
+        $this->isEnabledInfo = $f;
         return $this;
     }
 
@@ -48,7 +60,6 @@ class PlogStore
                 throw new \Exception("Pipe Not Exists.");
             }
             $ActiveTime = @file_get_contents($pipeActive);
-            //大于5s
             if (bcsub(time(), $ActiveTime) > $this->timeOut) {
                 throw new \Exception("pipe 激活时间超过{$this->timeOut}");
             }
@@ -66,7 +77,15 @@ class PlogStore
                     pcntl_alarm(0);
                     $logger     = new Logger("{$serviceName}", []);
                     $LogHandler = new PipeStreamHandler($handle, Logger::DEBUG);
+                    $LogHandler->setFormatter(new JsonFormatter());
                     $logger->pushHandler($LogHandler);
+                    if ($this->isEnabledInfo) {
+                        $logger->pushProcessor(new HostnameProcessor());
+                        $logger->pushProcessor(new WebProcessor());
+                        $logger->pushProcessor(new MemoryUsageProcessor());
+                        $logger->pushProcessor(new UidProcessor());
+                        $logger->pushProcessor(new ProcessIdProcessor());
+                    }
                     $logger->pushProcessor(
                         function ($record) use ($extra) {
                             $record['extra'] = $extra;
@@ -74,7 +93,6 @@ class PlogStore
                         });
                     $func = $this->levelMap[$LogLevel];
                     $logger->$func($Message, $Contexts);
-//                    var_dump("SUCC=>  ".$Message.PHP_EOL);
                     fclose($handle);
                 }
             }
@@ -88,6 +106,5 @@ class PlogStore
             $localLogger->$func($Message, $Contexts);
             fclose($localHandle);
         }
-
     }
 }
