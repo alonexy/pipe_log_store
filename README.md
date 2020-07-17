@@ -13,3 +13,8 @@ $PlogStore = new Alonexy\Pls\PlogStore();
 $PlogStore->logStore("PlogStoreServce","logMessage",["user"=>'张三',time()],['id'=>111]);
 
 ```
+
+```
+$PlogStore->setTimeout(3)->isEnabledInfo(false)->logStore("PlogStoreServce","错误信息提示1",["user"=>'测试111',time()],['sdadafafxxx'=>111]);
+
+```

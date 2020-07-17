@@ -12,4 +12,4 @@ $PlogStore->setTimeout(3)->logStore("PlogStoreServce","错误信息提示1",["us
 //        $PlogStore->logStore("PlogStoreServce","PlogStore",["user"=>'测试222',time(),"{$e->getMessage()}"],['sdadafafxxx'=>111]);
 //    }
 //}
-$PlogStore->logStore("PlogStoreServce","错误信息2222",["user"=>'测试3333',time()],['xxdadadadadx'=>111]);
+$PlogStore->isEnabledInfo(false)->logStore("PlogStoreServce","错误信息2222",["user"=>'测试3333',time()],['xxdadadadadx'=>111]);
