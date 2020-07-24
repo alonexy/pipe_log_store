@@ -24,6 +24,7 @@ class PlogStore
     ];
     protected $timeOut = 10;
     protected $isEnabledInfo = true;
+    protected $debugTrace = false;
 
     /**
      * @param int $seconds
@@ -45,9 +46,36 @@ class PlogStore
         return $this;
     }
 
+    /**
+     * @param bool $b
+     * @return $this
+     */
+    public function debugTrace(bool $b)
+    {
+        $this->debugTrace = $b;
+        return $this;
+    }
+
     public function logStore($serviceName, $Message, array $Contexts, array $extra = [], $LogLevel = Logger::INFO)
     {
         try {
+            if ($this->debugTrace) {
+                $traces = debug_backtrace(DEBUG_BACKTRACE_PROVIDE_OBJECT, 2);
+                if (isset($traces[1]) || isset($traces[0])) {
+                    $trace          = isset($traces[1])?$traces[1]:$traces[0];
+                    $fileAndLine    = "%d:%s && ";
+                    $callInFunction = $fileAndLine . "%s ";
+                    $callInMethod   = $fileAndLine . "[%s] %s@%s ";
+
+                    if (isset($trace['class'])) {
+                        $errTraces = sprintf($callInMethod, $trace['line'], $trace['file'], $trace['type'], $trace['class'], $trace['function']);
+                    }
+                    else {
+                        $errTraces = sprintf($callInFunction, $trace['line'], $trace['file'], $trace['function']);
+                    }
+                    $extra['debugTrace'] = $errTraces;
+                }
+            }
             if (!isset($this->levelMap[$LogLevel])) {
                 throw new \Exception("LogLevel Not Found.");
             }
